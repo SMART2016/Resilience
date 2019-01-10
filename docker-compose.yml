@@ -1,0 +1,17 @@
+version: '2'
+
+networks:
+ app-tier:
+  driver: bridge
+
+
+services:
+ cassandra:
+  image: cassandra:latest
+  privileged: true
+  volumes:
+   - /home/ankita/cassandra:/cassandra
+  ports:
+   - "9042:9042"
+  networks:
+   - app-tier
