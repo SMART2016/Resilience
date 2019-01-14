@@ -56,6 +56,8 @@
 
 ;;Breaks the connection between zookeeper and kafka instance
 ;;Check by trying to create a topic on kafka it will not be able to create
+;;Adds a rule to drop connection to kafka1 server
+;;su -c iptables -A INPUT -s 172.28.0.3(kafka1) -j DROP
 (havoc/exec! docker
              {:command :link/cut
               :from    :zoo1
@@ -63,6 +65,8 @@
 
 ;;Fixes the connection between zookeeper and kafka instance
 ;;After running this command you will be able to create topic.
+;;Deletes a rule to drop connection to kafka1 server
+;;su -c iptables -D INPUT -s 172.28.0.3(kafka1) -j DROP
 (havoc/exec! docker
              {:command :link/fix
               :from    :zoo1
