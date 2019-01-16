@@ -10,4 +10,5 @@
                  [org.slf4j/jul-to-slf4j "1.7.14"]
                  [org.slf4j/jcl-over-slf4j "1.7.14"]
                  [ig/havoc "0.1.1"]
-                 [org.clojure/tools.logging "0.1.2"]])
+                 [org.clojure/tools.logging "0.1.2"]]
+                 :aot [resilienceautomation.core])
