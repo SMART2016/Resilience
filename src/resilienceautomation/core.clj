@@ -1,78 +1,40 @@
 (ns resilienceautomation.core
-  (:require [clojure.java.shell :as shell]
-            [clojure.tools.logging :as log]
-            [clj-http.client :as http-client]
-            [ig.havoc.core :as havoc]))
-
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
-
-;;This functions help starting the dockerized environment through docker-compose up
-(defn start-system []
-  (log/info "Starting system ...")
-  (shell/sh "docker-compose"
-            "-p" "Resilience"
-            "-f" "docker-compose.yml" "up"
-             "-d"
-            "--build"
-            "--force-recreate"))
+   (:require [ig.havoc.core :as havoc]
+            [resilienceautomation.platform :as plat]
+            [clojure.tools.logging :as log]))
 
 
-;;This functions help stopping the dockerized environment through docker-compose down
-(defn stop-system []
-   (log/info "Stopping system ...")
-   (shell/sh "docker-compose"
-             "-p" "Resilience"
-             "-f" "docker-compose.yml" "down" "-v" "--remove-orphans"))
-
-
-(comment
-(start-system)
-
-;;Controller to control individual docker containers in the above environment
-;;Note: the project name in the docker var definition must be all small case
-	(def docker (havoc/create-docker "http://localhost:4243" "resilience"))
-	
-;;Command to stop the zookeeper service	
-(havoc/exec! docker
-             {:command :container/stop
-              :host    :zoo1})
-
-;;Command to start the zookeeper service	
-(havoc/exec! docker
-             {:command :container/start
-              :host    :zoo1})
-
-;;Command to start the zookeeper service	
-(havoc/exec! docker
+;;Write testcases with multiple command to disrupt the env as below
+(defn testcase1 [dockerApiUrl envName]
+   ;;Controller to control individual docker containers in the above environment
+  ;;Note: the project name in the docker var definition must be all small case
+	(let [docker (havoc/create-docker dockerApiUrl envName)]
+  (havoc/exec! docker
              {:command :container/stop
               :host    :cassandra1})
-
-(havoc/exec! docker
+  (havoc/exec! docker
              {:command :container/start
               :host    :cassandra1})
-
-;;Breaks the connection between zookeeper and kafka instance
-;;Check by trying to create a topic on kafka it will not be able to create
-;;Adds a rule to drop connection to kafka1 server
-;;su -c iptables -A INPUT -s 172.28.0.3(kafka1) -j DROP
-(havoc/exec! docker
+  (havoc/exec! docker
              {:command :link/cut
               :from    :zoo1
               :to      :kafka1})
-
-;;Fixes the connection between zookeeper and kafka instance
-;;After running this command you will be able to create topic.
-;;Deletes a rule to drop connection to kafka1 server
-;;su -c iptables -D INPUT -s 172.28.0.3(kafka1) -j DROP
-(havoc/exec! docker
+  (havoc/exec! docker
              {:command :link/fix
               :from    :zoo1
               :to      :kafka1})
+  )
+ )
 
 
+;;call startEnv to start the env
+(defn startEnv [dockerComposeFile envName]
+  (plat/start-system dockerComposeFile envName)
+)
+
+;;call destroyEnv to stop all containers
+(defn destroyEnv [dockerComposeFile envName]
+  (plat/stop-system dockerComposeFile envName)
 )
 
 

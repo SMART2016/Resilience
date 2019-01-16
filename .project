@@ -26,4 +26,11 @@
 		<nature>ccw.leiningen.nature</nature>
 		<nature>ccw.nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>resilienceautomation</name>
+			<type>2</type>
+			<location>/home/ankita/resilienceautomation/src/resilienceautomation</location>
+		</link>
+	</linkedResources>
 </projectDescription>
