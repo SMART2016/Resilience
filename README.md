@@ -4,7 +4,28 @@ A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
 
-Fixme
+
+### create jar of the clojure project to be used with java
+
+1. Open terminal
+2. Make sure that lein or clojure is installed in the environment, if not follow below steps to install:
+		
+		https://leiningen.org/ 
+
+3. Go to the clojure project directory for example "resilienceautomation"
+4. Run the below command to create jar for the clojure project:
+
+		>>lein uberjar
+
+5. The above step will create a folder "target" inside the project folder which will contain 2 jars.
+6. The jar that will be inter operable with your java and you will have to use that clojure jar in your java project will be ending with 
+
+	<projectname>-<version>-SNAPSHOT-standalone.jar
+	Eg: resilienceautomation-0.1.0-SNAPSHOT-standalone.jar
+
+7. Add the jar into the classpath of your java application and access it as any other java class.
+
+   <b>Note:</b> Right now the current clojure exposes all methods as static methods for simplicity.
 
 ## How do I access the Docker REST API remotely?
 
